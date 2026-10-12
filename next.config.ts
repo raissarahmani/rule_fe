@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   basePath: "/rule",
 
+  allowedDevOrigins: ["10.125.22.108"],
+
   reactCompiler: true,
 
   experimental: {
