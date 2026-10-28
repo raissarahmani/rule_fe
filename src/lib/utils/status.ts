@@ -5,8 +5,8 @@ export type StandardStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED" |
 export function getUnderlyStatus(
   item: UnderlyResponse | UnderlyHistoryResponse
 ): StandardStatus {
-  if ("action_type" in item) {
-    switch (item.action_type) {
+  if ("ActionType" in item) {
+    switch (item.ActionType) {
       case "SUBMITTED":
         return "PENDING";
       case "APPROVED":

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { isAxiosError } from "axios";
 import { Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,8 @@ import { cn } from "@/lib/utils";
 import { resolveGlobalLimit } from "@/lib/api/limit";
 import { resolveMargin } from "@/lib/api/rate-margin";
 import { LimitListTable, RateListTable } from "./_components/table";
+import { useAuth } from "@/context/auth-context";
+import { canApprove } from "@/lib/permissions";
 
 type AuthorizationType = "all" | "limit" | "rate";
 type TabType = "limit" | "rate";
@@ -40,6 +43,7 @@ function useDebounce<T>(value: T, delay: number = 400): T {
 }
 
 export default function OtorisasiListPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("limit");
   const [authorizationType, setAuthorizationType] = useState<AuthorizationType>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -57,6 +61,7 @@ export default function OtorisasiListPage() {
   };
 
   const handleResolve = async (status: "Approve" | "Reject", note?: string) => {
+    if (!canApprove(user, activeTab)) return;
     if (selectedIds.length === 0) {
       toast.info("Pilih setidaknya satu item untuk diproses");
       return;
@@ -91,11 +96,11 @@ export default function OtorisasiListPage() {
       setReason("");
       setRejectModalOpen(false);
       setRefreshKey((prev) => prev + 1);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to resolve authorization:", error);
 
       const errorMessage =
-        error?.response?.data?.message ||
+        (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) ||
         `Gagal memproses otorisasi. Silakan coba lagi.`;
 
       toast.error(errorMessage);
@@ -198,13 +203,13 @@ export default function OtorisasiListPage() {
         <div className="flex justify-end gap-3 mt-4">
           <Button
             variant="destructive"
-            disabled={selectedIds.length === 0 || isSubmitting}
+            disabled={selectedIds.length === 0 || isSubmitting || !canApprove(user, activeTab)}
             onClick={() => setRejectModalOpen(true)}
           >
             Tolak
           </Button>
           <Button
-            disabled={selectedIds.length === 0 || isSubmitting}
+            disabled={selectedIds.length === 0 || isSubmitting || !canApprove(user, activeTab)}
             onClick={() => handleResolve("Approve")}
           >
             {isSubmitting && <Loader2 className="mr-2 size-4 animate-spin" />}
@@ -252,4 +257,4 @@ export default function OtorisasiListPage() {
       </div>
     </div>
   );  
-} 
+}

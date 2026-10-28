@@ -14,7 +14,9 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { menuItems } from "@/lib/menu";
+import { menuItems, type MenuItem } from "@/lib/menu";
+import { useAuth } from "@/context/auth-context";
+import { canAccessRoute } from "@/lib/permissions";
 
 export default function ProtectedLayout({
   children,
@@ -22,9 +24,19 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user, loading, logout } = useAuth();
 
   const menuList = Object.values(menuItems);
   const pathSegments = pathname.split("/").filter(Boolean);
+
+  if (loading) return <main className="p-6" role="status">Memeriksa akses...</main>;
+  if (!user || !canAccessRoute(user, pathname)) return (
+    <main className="p-6">
+      <p role="alert">Akses Rule Treasury tidak tersedia. Hubungi administrator untuk memeriksa akun dan izin menu Anda.</p>
+      <a className="mr-4 underline" href="/rule/login">Masuk kembali</a>
+      <button className="underline" onClick={logout}>Keluar</button>
+    </main>
+  );
 
   return (
     <SidebarProvider>
@@ -41,7 +53,7 @@ export default function ProtectedLayout({
                   const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
                   const isLast = index === pathSegments.length - 1;
 
-                  const findMenuItem = (items: typeof menuList): any => {
+                  const findMenuItem = (items: MenuItem[]): MenuItem | null => {
                     for (const item of items) {
                       if (item.url === href) return item;
                       if (item.items) {
@@ -72,7 +84,10 @@ export default function ProtectedLayout({
                           </BreadcrumbPage>
                         ) : (
                           <BreadcrumbLink asChild>
-                            <Link href={href} className="flex items-center gap-1.5">
+                            <Link
+                              href={href}
+                              className="flex items-center gap-1.5"
+                            >
                               {Icon && <Icon className="size-4 shrink-0" />}
                               <span>{title}</span>
                             </Link>

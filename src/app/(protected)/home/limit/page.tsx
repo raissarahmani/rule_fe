@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Pencil,
-  Search,
-  User,
-  CheckCircle2,
-  Loader2,
-} from "lucide-react";
+import { Pencil, Search, User, CheckCircle2, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,8 +15,11 @@ import {
 import { formatDateTime } from "@/lib/utils/date";
 import { LimitTable } from "./_components/table";
 import { EditLimitDialog } from "./_components/edit-modal";
+import { useAuth } from "@/context/auth-context";
+import { canEdit } from "@/lib/permissions";
 
 export default function LimitPage() {
+  const { user } = useAuth();
   const [limits, setLimits] = useState<LimitResponse[]>([]);
   const [history, setHistory] = useState<LimitHistoryResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,8 +75,10 @@ export default function LimitPage() {
 
   const filteredHistory = history.filter((item) =>
     Object.values(item).some((val) =>
-      String(val ?? "").toLowerCase().includes(searchQuery.toLowerCase())
-    )
+      String(val ?? "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()),
+    ),
   );
 
   const formatCurrency = (val?: number) =>
@@ -155,6 +154,7 @@ export default function LimitPage() {
                 <Button
                   className="w-full md:w-auto"
                   onClick={() => setDialogOpen(true)}
+                  disabled={!canEdit(user, "limit")}
                 >
                   <Pencil className="mr-2 size-4" /> Edit Limit
                 </Button>
@@ -175,7 +175,7 @@ export default function LimitPage() {
             className="pl-9"
           />
         </div>
-         <LimitTable data={filteredHistory} loading={loading} />
+        <LimitTable data={filteredHistory} loading={loading} />
       </div>
 
       <EditLimitDialog

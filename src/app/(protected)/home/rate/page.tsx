@@ -22,8 +22,11 @@ import {
 import { formatDateTime } from "@/lib/utils/date";
 import { RateTable } from "./_components/table";
 import { EditableRateData } from "./_components/columns";
+import { useAuth } from "@/context/auth-context";
+import { canEdit } from "@/lib/permissions";
 
 export default function RatePage() {
+  const { user } = useAuth();
   const [rates, setRates] = useState<EditableRateData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -36,7 +39,7 @@ export default function RatePage() {
     try {
       const data = await getFinalRate();
       if (data && data.length > 0) {
-        const formattedData: EditableRateData[] = data.map((item: any) => ({
+        const formattedData: EditableRateData[] = data.map((item) => ({
           ...item,
           margin_sell_input: item.margin_sell ?? 0,
           margin_buy_input: item.margin_buy ?? 0,
@@ -121,6 +124,7 @@ export default function RatePage() {
   };
 
   const handleToggleEdit = async () => {
+    if (!canEdit(user, "rate")) return;
     if (isEditing) {
       try {
         setSubmitting(true);
@@ -223,7 +227,7 @@ export default function RatePage() {
             </h2>
             <Button
               onClick={handleToggleEdit}
-              disabled={submitting || loading}
+              disabled={submitting || loading || !canEdit(user, "rate")}
               variant="default"
             >
               {submitting ? (

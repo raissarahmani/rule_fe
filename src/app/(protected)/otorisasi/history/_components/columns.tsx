@@ -4,10 +4,10 @@ import Link from "next/link";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { LimitHistoryResponse } from "@/lib/api/limit";
+import type { BaseHistoryItem } from "./table";
 import { formatDateTime } from "@/lib/utils/date";
 
-export const columns: ColumnDef<LimitHistoryResponse>[] = [
+export const columns: ColumnDef<BaseHistoryItem>[] = [
   {
     accessorKey: "created_at",
     header: "Tanggal otorisasi",

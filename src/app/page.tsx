@@ -21,7 +21,9 @@ export default function HomePage() {
   //   if (isSA) {
   //     router.replace("/users");
   //   } else {
-      router.replace("/home");
+  useEffect(() => {
+    router.replace("/home");
+  }, [router]);
   //   }
     
   // }, [role, isLoggedIn, loading, router]);

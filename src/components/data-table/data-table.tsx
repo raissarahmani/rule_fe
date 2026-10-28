@@ -81,7 +81,10 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getRowId: (row: any) => row.id ?? row._id, // Extract row ID for selection callback
+    getRowId: (row) => {
+      const record = row as { id?: string; _id?: string };
+      return (record.id ?? record._id)!; // Extract row ID for selection callback
+    },
   });
 
   // Notify parent of selected row IDs whenever selection state changes
@@ -89,7 +92,7 @@ export function DataTable<TData, TValue>({
     if (!onSelectionChange) return;
 
     const selectedRows = table.getSelectedRowModel().rows;
-    const selectedIds = selectedRows.map((row) => (row.original as any).id ?? row.id);
+    const selectedIds = selectedRows.map((row) => (row.original as { id?: string }).id ?? row.id);
     onSelectionChange(selectedIds);
   }, [rowSelectionState, onSelectionChange, table]);
 

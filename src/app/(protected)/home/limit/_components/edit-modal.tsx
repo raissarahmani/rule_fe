@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { isAxiosError } from "axios";
 import {
   Dialog,
   DialogContent,
@@ -50,7 +51,7 @@ export function EditLimitDialog({
 
   const handleSave = async () => {
     setSubmitting(true);
-    const apiCalls: Promise<any>[] = [];
+    const apiCalls: ReturnType<typeof updateGlobalLimit>[] = [];
 
     if (!fxNoChange && fxLimit && fxAmount) {
       apiCalls.push(
@@ -82,11 +83,11 @@ export function EditLimitDialog({
       toast.success("Berhasil mengirim permintaan edit limit");
       onSuccess();
       onOpenChange(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Gagal mengirim permintaan edit limit:", error);
 
       const errorMessage =
-        error?.response?.data?.message ||
+        (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) ||
         "Gagal mengirim permintaan edit limit. Silakan coba lagi.";
 
       toast.error(errorMessage);

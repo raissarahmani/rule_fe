@@ -21,7 +21,7 @@ export interface Modul {
 export interface DynamicMenuItem {
   title: string;
   url?: string;
-  icon?: any;
+  icon?: import("react").ElementType;
   items?: { title: string; url: string }[];
 }
 
