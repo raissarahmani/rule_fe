@@ -99,7 +99,7 @@ export default function UnderlyingPage() {
       }
     }
 
-    function updateStats(statRes: any) {
+    function updateStats(statRes: UnderlyStatResponse | UnderlyStatResponse[]) {
       const rawStat = Array.isArray(statRes) ? statRes[0] : statRes;
       if (rawStat) {
         setStats({
@@ -120,7 +120,7 @@ export default function UnderlyingPage() {
     if (!debouncedSearch) return currentTabRawData;
 
     const query = debouncedSearch.toLowerCase();
-    return currentTabRawData.filter((item: any) => {
+    return currentTabRawData.filter((item) => {
       return Object.entries(item).some(([, val]) => {
         if (val === null || val === undefined) return false;
         if (typeof val === "object") return false;

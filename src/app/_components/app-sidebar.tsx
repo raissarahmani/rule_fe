@@ -29,6 +29,8 @@ import {
 
 import { menuItems } from "@/lib/menu";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-context";
+import { canAccessRoute } from "@/lib/permissions";
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
 
@@ -36,7 +38,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const items = Object.values(menuItems);
+  const { user } = useAuth();
+  const items = Object.values(menuItems).map(item => ({
+    ...item, items: item.items?.filter(child => canAccessRoute(user, child.url)),
+  })).filter(item => item.items ? item.items.length > 0 : canAccessRoute(user, item.url));
 
   return (
     <Sidebar 
@@ -51,7 +56,7 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       <SidebarHeader className="border-b px-4 py-4 group-data-[collapsible=icon]:hidden bg-primary">
         <div className="flex items-center justify-center">
           <div className="group-data-[collapsible=icon]:hidden">
-            <Image src="/bcas-logo.png" alt="BCAS Logo" width={150} height={150} />
+            <Image src="/rule/bcas-logo.png" alt="BCAS Logo" width={150} height={150} />
           </div>
         </div>
       </SidebarHeader>

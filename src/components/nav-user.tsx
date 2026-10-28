@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +18,7 @@ import {
 // import { logout as apiLogout } from "@/lib/api/auth";
 
 export function NavUser() {
-  const router = useRouter();
+  const { user, logout } = useAuth();
   // const { userDomain, role, logout, loading } = useAuth();
 
   // const handleLogout = async () => {
@@ -44,6 +44,12 @@ export function NavUser() {
         <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <UserRoundIcon className="size-5" />
         </div>
+        {user && <div className="text-right text-sm">
+          <p className="font-semibold">{user.name || user.username}</p>
+          <p className="text-xs text-muted-foreground">
+            {user.level === "2" ? "Supervisor" : "Operator"} · {user.profile.join(", ")}
+          </p>
+        </div>}
         {/* <div className="text-right">
           <p className="text-sm font-semibold text-foreground capitalize">
             {userDomain ? normalizeUserDomain(userDomain) : "User"}
@@ -67,6 +73,7 @@ export function NavUser() {
             className="w-48"
           >
             <DropdownMenuItem
+              onSelect={logout}
               // onClick={handleLogout}
               className="
                 cursor-pointer
@@ -75,7 +82,7 @@ export function NavUser() {
               "
             >
               <LogOutIcon className="mr-2 size-4" />
-              Logout
+              Logout{user ? ` (${user.username})` : ""}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

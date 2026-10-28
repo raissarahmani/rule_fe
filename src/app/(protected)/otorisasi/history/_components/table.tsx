@@ -16,7 +16,11 @@ export interface BaseHistoryItem {
   user_authorization?: string;
   comment?: string;
   created_at?: string;
-  [key: string]: any;
+  action_type?: string;
+  requested_by?: string;
+  action_by?: string;
+  note?: string;
+  [key: string]: unknown;
 }
 
 interface HistoryTableProps {
@@ -97,7 +101,7 @@ export function HistoryTable({
 
   return (
     <DataTable
-      columns={columns as any}
+      columns={columns}
       data={data}
       searchQuery={searchQuery}
     />

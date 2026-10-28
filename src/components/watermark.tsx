@@ -40,7 +40,7 @@ export function Watermark() {
             <g transform="rotate(-30 110 80)">
               {/* Logo Image */}
               <image
-                href="/bcas-wm.png"
+                href="/rule/bcas-wm.png"
                 x="5"
                 y="30"
                 width="200"

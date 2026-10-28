@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState, useEffect } from "react";
+import { isAxiosError } from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -9,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
+import { canApprove } from "@/lib/permissions";
 import UnderlyORForm from "./_components/or-form";
 import UnderlyFXForm from "./_components/fx-form";
 import DocumentCard from "./_components/doc-section";
@@ -27,6 +30,7 @@ interface PageProps {
 }
 
 export default function UnderlyDetailPage({ params }: PageProps) {
+  const { user } = useAuth();
   const router = useRouter();
   const resolvedParams = use(params);
   const docId = resolvedParams.id;
@@ -70,7 +74,7 @@ export default function UnderlyDetailPage({ params }: PageProps) {
   }, [docId]);
 
   const handleUpdateStatus = async (status: "APPROVED" | "REJECTED") => {
-    if (!docId || !data) return;
+    if (!docId || !data || !canApprove(user, "underlying")) return;
 
     try {
       setIsSubmitting(true);
@@ -103,11 +107,11 @@ export default function UnderlyDetailPage({ params }: PageProps) {
       );
 
       router.push("/home/underly");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(`Failed to ${status.toLowerCase()} underlying:`, error);
 
       const errorMessage =
-        error?.response?.data?.message ||
+        (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) ||
         `Gagal memproses otorisasi underlying. Silakan coba lagi.`;
 
       toast.error(errorMessage);
@@ -214,7 +218,7 @@ export default function UnderlyDetailPage({ params }: PageProps) {
         <DuplicateDoc data={duplicateData.similar_docs ?? []} />
       )}
 
-      {data?.doc_status?.toLowerCase() === "pending" && (
+      {data?.doc_status?.toLowerCase() === "pending" && canApprove(user, "underlying") && (
         <div className="flex justify-end gap-3 pt-4">
           <Button
             variant="destructive"
