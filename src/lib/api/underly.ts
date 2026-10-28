@@ -24,6 +24,8 @@ export type UnderlyResponse = {
       beneficiary_address: string;
       title: string;
       doc_type: string;
+      doc_no: string;
+      doc_date: string;
       amount_submitted: number;
       amount_approved: number;
       ccy: string;
@@ -56,7 +58,6 @@ export type UnderlyResponse = {
 // export type EnrichedUnderlyHistory = UnderlyHistoryResponse;
 
 export type UnderlyHistoryResponse = {
-<<<<<<< HEAD
   ID: string;
   DocID: string;
   CIF: string;
@@ -80,20 +81,6 @@ export type UnderlyHistoryResponse = {
   PathToFile: string[];
   ExpiryDate : string;
 }
-=======
-      ID: string;
-      DocID: string;
-      CIF: string;
-      Type: string;
-      AmountSubmitted: number;
-      AmountApproved: number;
-      Ccy: string;
-      ActionType: string;
-      ActionBy: string;
-      Note: string;
-      CreatedAt: string;
-};
->>>>>>> 04008082723a7e164500e46c1a8b14b66989ac71
 
 export type UnderlyStatResponse = {
       total: number;
@@ -102,19 +89,11 @@ export type UnderlyStatResponse = {
       pending: number;
 };
 
-<<<<<<< HEAD
 // export type EnrichedUnderlyHistory = UnderlyHistoryResponse &
 //   Partial<Omit<UnderlyResponse, keyof UnderlyHistoryResponse>> & {
 //     submitted_at?: string;
 //     action_at?: string;
 //   };
-=======
-export type EnrichedUnderlyHistory = UnderlyHistoryResponse &
-      Partial<Omit<UnderlyResponse, keyof UnderlyHistoryResponse>> & {
-            submitted_at?: string;
-            action_at?: string;
-      };
->>>>>>> 04008082723a7e164500e46c1a8b14b66989ac71
 
 export interface DuplicateUnderlyResponse {
       is_duplicate: boolean;
@@ -162,7 +141,6 @@ export async function getUnderlyById(
 export async function getUnderlyHistory(
       params?: UnderlyParam,
 ): Promise<UnderlyHistoryResponse[]> {
-<<<<<<< HEAD
   const cleanParams: Record<string, string> = {};
   if (params?.search) cleanParams.search = params.search;
   if (params?.type && params.type !== "ALL") cleanParams.type = params.type;
@@ -172,17 +150,6 @@ export async function getUnderlyHistory(
     { params: cleanParams }
   );
   return res.data.data;
-=======
-      const cleanParams: Record<string, string> = {};
-      if (params?.search) cleanParams.search = params.search;
-      if (params?.type && params.type !== "ALL") cleanParams.type = params.type;
-
-      const res = await api.get<{ data: UnderlyHistoryResponse[] }>(
-            "/underly-docs/history",
-            { params: cleanParams },
-      );
-      return res.data.data;
->>>>>>> 04008082723a7e164500e46c1a8b14b66989ac71
 }
 
 export async function getUnderlyStat(
