@@ -103,6 +103,7 @@ export const getColumns = ({
         return (
           <Input
             type="number"
+            step="any"
             className="h-8 w-28"
             value={row.original.margin_sell_input ?? ""}
             onChange={(e) =>
@@ -122,6 +123,7 @@ export const getColumns = ({
         return (
           <Input
             type="number"
+            step="any"
             className="h-8 w-28"
             value={row.original.margin_buy_input ?? ""}
             onChange={(e) =>

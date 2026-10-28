@@ -4,7 +4,9 @@ const nextConfig: NextConfig = {
       basePath: "/rule",
       output: "standalone",
 
-      reactCompiler: true,
+  allowedDevOrigins: ["10.125.22.108"],
+
+  reactCompiler: true,
 
       experimental: {
             serverActions: {
