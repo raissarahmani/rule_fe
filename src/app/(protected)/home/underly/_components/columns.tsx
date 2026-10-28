@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UnderlyResponse, EnrichedUnderlyHistory } from "@/lib/api/underly";
+import { UnderlyResponse, UnderlyHistoryResponse } from "@/lib/api/underly";
 import { getUnderlyStatus } from "@/lib/utils/status";
 import { formatDateTime, formatDate } from "@/lib/utils/date";
 
@@ -39,7 +39,11 @@ export const columns: ColumnDef<UnderlyResponse>[] = [
     header: "Tipe Dokumen",
   },
   {
-    accessorKey: "title",
+    accessorKey: "doc_date",
+    header: "Tanggal Dokumen",
+  },
+  {
+    accessorKey: "doc_no",
     header: "Nomor Dokumen",
   },
   {
@@ -101,76 +105,80 @@ export const columns: ColumnDef<UnderlyResponse>[] = [
   },
 ];
 
-export const historyColumns: ColumnDef<EnrichedUnderlyHistory>[] = [
+export const historyColumns: ColumnDef<UnderlyHistoryResponse>[] = [
   {
     accessorKey: "DocID",
     header: "Kode Underlying",
   },
   {
-    accessorKey: "type",
+    accessorKey: "Type",
     header: "Jenis Underlying",
   },
   {
-    accessorKey: "beneficiary_country",
+    accessorKey: "BeneficiaryCountry",
     header: "Negara Tujuan",
   },
   {
-    accessorKey: "beneficiary_bank",
+    accessorKey: "BeneficiaryBank",
     header: "Bank Tujuan",
   },
   {
-    accessorKey: "beneficiary_account_no",
+    accessorKey: "BeneficiaryAccountNo",
     header: "Nomor Rekening Tujuan",
   },
   {
-    accessorKey: "beneficiary_name",
+    accessorKey: "BeneficiaryName",
     header: "Nama Penerima",
   },
   {
-    accessorKey: "doc_type",
+    accessorKey: "DocType",
     header: "Tipe Dokumen",
   },
   {
-    accessorKey: "title",
+    accessorKey: "DocDate",
+    header: "Tanggal Dokumen",
+  },
+  {
+    accessorKey: "DocNo",
     header: "Nomor Dokumen",
   },
   {
-    accessorKey: "expiry_date",
+    accessorKey: "ExpiryDate",
     header: "Tanggal Jatuh Tempo",
     cell: ({ row }) => {
-      const expiryDate = row.getValue("expiry_date") as string;
+      const expiryDate = row.getValue("ExpiryDate") as string;
       return expiryDate ? formatDate(expiryDate) : "-";
     }
   },
   {
-    accessorKey: "amount_approved",
+    accessorKey: "AmountApproved",
     header: "Limit Approval",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount_approved"));
-      const ccy = row.original.ccy || "USD";
+      const amount = parseFloat(row.getValue("AmountApproved"));
+      const ccy = row.original.Ccy || "USD";
       return `${ccy} ${amount.toLocaleString("en-US")}`;
     },
   },
   {
-    accessorKey: "action_at",
+    accessorKey: "ActionAt",
     header: "Tanggal Approval",
     cell: ({ row }) => {
-      const actionAt = row.getValue("action_at") as string;
+      const actionAt = row.getValue("ActionAt") as string;
       return actionAt ? formatDateTime(actionAt) : "-";
     },
   },
   {
-    accessorKey: "action_type",
+    accessorKey: "ActionType",
     header: "Status",
     cell: ({ row }) => {
-      const status = getUnderlyStatus(row.original);
+      const status = row.original.ActionType
 
       switch (status) {
-        case "APPROVED":
+        case "ApproveDoc":
           return <p className="font-medium text-primary">Disetujui</p>;
-        case "REJECTED":
+        case "RejectDoc":
           return <p className="font-medium text-destructive">Ditolak</p>;
-        case "PENDING":
+        case "SubmitDoc":
           return <p className="font-medium text-amber-500">Menunggu Otorisasi</p>;
         default:
           return <p className="font-medium">-</p>;
@@ -178,14 +186,14 @@ export const historyColumns: ColumnDef<EnrichedUnderlyHistory>[] = [
     },
   },
   {
-    accessorKey: "note",
+    accessorKey: "Note",
     header: "Catatan Approval",
   },
   {
     id: "actions",
     header: "Action",
     cell: ({ row }) => {
-      const targetId = row.original.id || row.original.DocID;
+      const targetId = row.original.DocID;
 
       return (
         <Button variant="ghost" size="icon" asChild>

@@ -15,7 +15,7 @@ import {
   getUnderlyHistory,
   getUnderlyStat,
   UnderlyResponse,
-  EnrichedUnderlyHistory,
+  UnderlyHistoryResponse,
   UnderlyStatResponse,
   UnderlyParam
 } from "@/lib/api/underly";
@@ -28,7 +28,7 @@ type TabType = "list" | "history";
 
 export default function UnderlyingPage() {
   const [listData, setListData] = useState<UnderlyResponse[]>([]);
-  const [historyData, setHistoryData] = useState<EnrichedUnderlyHistory[]>([]);
+  const [historyData, setHistoryData] = useState<UnderlyHistoryResponse[]>([]);
   const [stats, setStats] = useState<UnderlyStatResponse>({
     total: 0,
     pending: 0,
@@ -74,22 +74,22 @@ export default function UnderlyingPage() {
             getUnderlyStat({ type: apiParams.type }),
           ]);
 
-          const enrichedHistory: EnrichedUnderlyHistory[] = (historyRes || []).map(
-            (historyItem) => {
-              const matchingDoc = listData.find(
-                (doc) => doc.id === historyItem.DocID
-              );
+          // const enrichedHistory: EnrichedUnderlyHistory[] = (historyRes || []).map(
+          //   (historyItem) => {
+          //     const matchingDoc = listData.find(
+          //       (doc) => doc.id === historyItem.DocID
+          //     );
 
-              return {
-                ...matchingDoc,
-                ...historyItem,
-                submitted_at: matchingDoc?.created_at,
-                action_at: historyItem.CreatedAt,
-              };
-            }
-          );
+          //     return {
+          //       ...matchingDoc,
+          //       ...historyItem,
+          //       submitted_at: matchingDoc?.created_at,
+          //       action_at: historyItem.CreatedAt,
+          //     };
+          //   }
+          // );
 
-          setHistoryData(enrichedHistory);
+          setHistoryData(historyRes || []);
           updateStats(statRes);
         }
       } catch (error) {
@@ -220,7 +220,7 @@ export default function UnderlyingPage() {
           ) : (
             <UnderlyingTable
               columns={historyColumns}
-              data={displayedData as EnrichedUnderlyHistory[]}
+              data={displayedData as UnderlyHistoryResponse[]}
               loading={loading}
             />
           )}
