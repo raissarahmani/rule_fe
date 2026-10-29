@@ -26,7 +26,7 @@ export function Watermark() {
   );
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 opacity-20 select-none">
+    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 opacity-10 select-none">
       <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
         <defs>
           {/* Pattern unit box: adjust width/height to control spacing */}
