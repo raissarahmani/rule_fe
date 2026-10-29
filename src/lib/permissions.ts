@@ -4,18 +4,50 @@ export const ruleMenus = {
   approvals: "Daftar Otorisasi Data", history: "Riwayat Otorisasi", activity: "Log Activity",
 } as const;
 export type RuleMenu = keyof typeof ruleMenus;
-export type RuleAccess = { level: string; menus: RuleMenu[] };
+export type RuleAccess = { level: string; menus: RuleMenu[]; profile?: string | string[] };
+
+export function hasProfile(user: RuleAccess | null | undefined, name: string): boolean {
+  if (!user?.profile) return false;
+  const target = name.toUpperCase();
+  if (Array.isArray(user.profile)) {
+    return user.profile.some(p => typeof p === "string" && p.trim().toUpperCase() === target);
+  }
+  if (typeof user.profile === "string") {
+    return user.profile.trim().toUpperCase() === target;
+  }
+  return false;
+}
 
 export function canView(user: RuleAccess | null | undefined, menu: RuleMenu) {
   return Boolean(user?.menus.includes(menu));
 }
 
-export function canEdit(user: RuleAccess | null | undefined, menu: "limit" | "rate") {
-  return user?.level === "1" && canView(user, menu);
+export function canEdit(user: RuleAccess | null | undefined, menu: "limit" | "rate" | "underlying") {
+  const level = String(user?.level);
+  
+  // RMT-Treasuri Level 1 can edit limit and rate only
+  if (hasProfile(user, "rmt-treasuri")) {
+    return level === "1" && (menu === "limit" || menu === "rate");
+  }
+
+  // RMT-DSO cannot edit limit and rate (or underlying as per general policy)
+  return false;
 }
 
 export function canApprove(user: RuleAccess | null | undefined, menu: "limit" | "rate" | "underlying") {
-  return user?.level === "2" && canView(user, menu) && canView(user, "approvals");
+  const level = String(user?.level);
+
+  if (menu === "underlying") {
+    // Both Level 1 and Level 2 of RMT-DSO can approve underlying
+    return (level === "1" || level === "2") && hasProfile(user, "rmt-dso");
+  }
+
+  if (menu === "limit" || menu === "rate") {
+    // Only RMT-Treasuri Level 2 can approve limit and rate
+    return level === "2" && hasProfile(user, "rmt-treasuri");
+  }
+
+  return false;
 }
 
 export function routeMenu(pathname: string): RuleMenu | undefined {
@@ -28,6 +60,10 @@ export function routeMenu(pathname: string): RuleMenu | undefined {
 }
 
 export function canAccessRoute(user: RuleAccess | null | undefined, pathname: string) {
+  const path = pathname.replace(/^\/rule(?=\/|$)/, "").replace(/\/$/, "");
+  if (path === "/otorisasi") {
+    return canView(user, "approvals") || canView(user, "history");
+  }
   const menu = routeMenu(pathname);
   return menu !== undefined && canView(user, menu);
 }

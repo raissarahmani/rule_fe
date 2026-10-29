@@ -10,12 +10,36 @@ test("RMT-RU matrix: operator edits, supervisor approves; role 99 never elevates
   for (const profile of ["CABANG", "RMT-DSO", "RMT-TREASURI"]) {
     for (const level of [1, 2]) {
       const user = parse(userInfo({ profile, level }));
-      for (const menu of ["home", "limit", "underlying", "rate", "history"]) assert.equal(permissions.canView(user, menu), true);
+      for (const menu of ["home", "limit", "underlying", "rate", "history"]) {
+        assert.equal(permissions.canView(user, menu), true);
+      }
       assert.equal(permissions.canView(user, "activity"), level === 2);
       assert.equal(permissions.canView(user, "approvals"), level === 2);
-      assert.equal(permissions.canEdit(user, "limit"), level === 1);
-      assert.equal(permissions.canApprove(user, "limit"), level === 2);
-      assert.equal(permissions.canApprove(user, "underlying"), level === 2);
+      assert.equal(permissions.canAccessRoute(user, "/rule/otorisasi"), true);
+
+      if (profile === "RMT-DSO") {
+        // RMT-DSO Level 1 & Level 2 can approve underlying
+        assert.equal(permissions.canApprove(user, "underlying"), true);
+        assert.equal(permissions.canApprove(user, "limit"), false);
+        assert.equal(permissions.canApprove(user, "rate"), false);
+        // RMT-DSO cannot edit limit or rate
+        assert.equal(permissions.canEdit(user, "limit"), false);
+        assert.equal(permissions.canEdit(user, "rate"), false);
+      } else if (profile === "RMT-TREASURI") {
+        // RMT-TREASURI Level 1 can edit limit and rate
+        assert.equal(permissions.canEdit(user, "limit"), level === 1);
+        assert.equal(permissions.canEdit(user, "rate"), level === 1);
+        // RMT-TREASURI Level 2 can approve limit and rate
+        assert.equal(permissions.canApprove(user, "limit"), level === 2);
+        assert.equal(permissions.canApprove(user, "rate"), level === 2);
+        assert.equal(permissions.canApprove(user, "underlying"), false);
+      } else {
+        assert.equal(permissions.canEdit(user, "limit"), false);
+        assert.equal(permissions.canEdit(user, "rate"), false);
+        assert.equal(permissions.canApprove(user, "limit"), false);
+        assert.equal(permissions.canApprove(user, "rate"), false);
+        assert.equal(permissions.canApprove(user, "underlying"), false);
+      }
     }
   }
 });
@@ -36,13 +60,15 @@ test("UserInfo binds identity, active flags, supported levels, module and profil
 });
 
 test("profile normalization handles registered strings without promoting malformed data", () => {
-  for (const profile of ["CABANG", "[CABANG]", '["CABANG"]', [" cabang "]]) assert.deepEqual(normalizeProfiles(profile), ["CABANG"]);
+  for (const profile of ["CABANG", "[CABANG]", '["CABANG"]', [" cabang "]]) {
+    assert.deepEqual(normalizeProfiles(profile), ["CABANG"]);
+  }
   assert.deepEqual(normalizeProfiles({ profile: "CABANG" }), []);
   assert.deepEqual(normalizeProfiles("[CABANG"), []);
 });
 
 test("Remittance lowercase modul claim grants only a unique eligible RMT-RU module", () => {
-  const data = userInfo();
+  const data = userInfo(); 
   const { Modul, ...profile } = data;
   assert.deepEqual(parse({ ...profile, modul: Modul }).menus, parse(data).menus);
   assert.throws(() => parse({ ...data, modul: Modul }), { status: 502 });
@@ -90,8 +116,8 @@ test("provider menus inherit module profile only when menu profile is absent, wh
 });
 
 test("BFF allowlist denies unknown paths, unsupported methods, edits by supervisors and approvals by operators", () => {
-  const operator = parse(userInfo());
-  const supervisor = parse(userInfo({ level: 2 }));
+  const operator = parse(userInfo({ profile: "RMT-TREASURI", level: 1 }));
+  const supervisor = parse(userInfo({ profile: "RMT-TREASURI", level: 2 })); // Adjusted profile for supervisor test context
   const check = (user, method, endpoint) => {
     const url = new URL(endpoint, "https://local.invalid");
     return permissions.canAccessApi(user, method, url.pathname.slice(1).split("/"), url.searchParams);
