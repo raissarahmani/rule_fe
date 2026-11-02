@@ -121,11 +121,11 @@ export default function UnderlyFXForm({
         </div>
         <div className="flex flex-col gap-2">
           <Label>Nomor Dokumen</Label>
-          <Input value={data?.title ?? "-"} disabled />
+          <Input value={data?.doc_no ?? "-"} disabled />
         </div>
         <div className="flex flex-col gap-2">
           <Label>Tanggal Dokumen</Label>
-          <Input value={formatDateDisplay(data?.expiry_date) || "-"} disabled />
+          <Input value={formatDateDisplay(data?.doc_date) || "-"} disabled />
         </div>
 
         <div className="flex flex-col gap-2">

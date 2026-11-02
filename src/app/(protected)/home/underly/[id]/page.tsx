@@ -97,7 +97,7 @@ export default function UnderlyDetailPage({ params }: PageProps) {
         note: note || undefined,
       };
 
-      await updateStatusUnderly(payload);
+      await updateStatusUnderly(payload);  
 
       const isApprove = status === "APPROVED";
       toast.success(
