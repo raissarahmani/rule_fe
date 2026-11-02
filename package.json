@@ -1,6 +1,6 @@
 {
       "name": "rule",
-      "version": "0.1.7",
+      "version": "0.1.10",
       "private": true,
       "scripts": {
             "dev": "next dev",
