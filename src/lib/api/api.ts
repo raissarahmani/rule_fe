@@ -56,27 +56,30 @@
 import axios from "axios";
 import { getApiBaseUrl } from "./runtime-config";
 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+// const PORTAL_URL = process.env.NEXT_PUBLIC_PORTAL_URL;
+
 const api = axios.create({
-  baseURL: BASE_URL,
-  // withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
+      baseURL: BASE_URL,
+      // withCredentials: true,
+      headers: {
+            "Content-Type": "application/json",
+      },
 });
 
 api.interceptors.request.use(async (config) => {
-  config.baseURL = await getApiBaseUrl();
-  return config;
+      config.baseURL = await getApiBaseUrl();
+      return config;
 });
 
 api.interceptors.response.use(undefined, (error) => {
-  if (typeof window !== "undefined" && error.response?.status === 401) {
-    const returnTo = window.location.pathname + window.location.search;
-    const login = new URL("/rule/login", window.location.origin);
-    login.searchParams.set("returnTo", returnTo);
-    window.location.assign(login.href);
-  }
-  return Promise.reject(error);
+      if (typeof window !== "undefined" && error.response?.status === 401) {
+            const returnTo = window.location.pathname + window.location.search;
+            const login = new URL("/rule/login", window.location.origin);
+            login.searchParams.set("returnTo", returnTo);
+            window.location.assign(login.href);
+      }
+      return Promise.reject(error);
 });
 
 // api.interceptors.response.use(
