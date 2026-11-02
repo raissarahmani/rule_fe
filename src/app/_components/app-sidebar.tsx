@@ -39,9 +39,23 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
   const { user } = useAuth();
-  const items = Object.values(menuItems).map(item => ({
-    ...item, items: item.items?.filter(child => canAccessRoute(user, child.url)),
-  })).filter(item => item.items ? item.items.length > 0 : canAccessRoute(user, item.url));
+  const items = Object.values(menuItems)
+    .map(item => {
+      if (item.items) {
+        const filteredSubItems = item.items.filter(child => canAccessRoute(user, child.url));
+        return { ...item, items: filteredSubItems };
+      }
+      return item;
+    })
+    .filter(item => {
+      if (item.items && item.items.length > 0) {
+        return true;
+      }
+      if (!item.items) {
+        return canAccessRoute(user, item.url);
+      }
+      return false;
+    });
 
   return (
     <Sidebar 
