@@ -59,14 +59,14 @@ export function canApprove(
 ) {
       const level = String(user?.level);
 
-      if (menu === "underlying") return true;
-      // if (menu === "underlying") {
-      //       // Both Level 1 and Level 2 of RMT-DSO can approve underlying
-      //       return (
-      //             (level === "1" || level === "2") &&
-      //             hasProfile(user, "rmt-dso")
-      //       );
-      // }
+      // if (menu === "underlying") return true;
+      if (menu === "underlying") {
+            // Both Level 1 and Level 2 of RMT-DSO can approve underlying
+            return (
+                  (level === "1" || level === "2") &&
+                  hasProfile(user, "rmt-dso")
+            );
+      }
 
       if (menu === "limit" || menu === "rate") {
             // Only RMT-Treasuri Level 2 can approve limit and rate
