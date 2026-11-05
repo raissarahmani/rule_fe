@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner"
 import { LimitResponse, updateGlobalLimit } from "@/lib/api/limit";
 import { Loader2 } from "lucide-react";
+import { formatWithCommas } from "@/lib/utils/number";
 
 interface EditLimitDialogProps {
   open: boolean;
@@ -117,13 +118,19 @@ export function EditLimitDialog({
                 className="w-24 bg-muted text-center"
               />
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder="0"
-                value={fxAmount}
+                value={formatWithCommas(fxAmount)}
                 disabled={fxNoChange || submitting}
-                onChange={(e) => setFxAmount(e.target.value)}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, "");
+
+                  if (rawValue.length <= 10) {
+                    setFxAmount(rawValue);
+                  }
+                }}
                 className="flex-1"
-                maxLength={10}
               />
             </div>
             <div className="flex items-center gap-2 pt-1">
@@ -151,14 +158,21 @@ export function EditLimitDialog({
                 disabled
                 className="w-24 bg-muted text-center"
               />
+
               <Input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 placeholder="0"
-                value={remittanceAmount}
+                value={formatWithCommas(remittanceAmount)}
                 disabled={remittanceNoChange || submitting}
-                onChange={(e) => setRemittanceAmount(e.target.value)}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, "");
+
+                  if (rawValue.length <= 10) {
+                    setRemittanceAmount(rawValue);
+                  }
+                }}
                 className="flex-1"
-                maxLength={10}
               />
             </div>
             <div className="flex items-center gap-2 pt-1">
