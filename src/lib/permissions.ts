@@ -95,8 +95,8 @@ export function canAccessRoute(
       pathname: string,
 ) {
       const path = pathname.replace(/^\/rule(?=\/|$)/, "").replace(/\/$/, "");
-      if (path === "/otorisasi") {
-            return canView(user, "approvals") || canView(user, "history");
+      if (path === "/otorisasi" || path === "otorisasi") {
+        return canView(user, "approvals") || canView(user, "history");
       }
       const menu = routeMenu(pathname);
       return menu !== undefined && canView(user, menu);

@@ -48,13 +48,10 @@ export function AppSidebar({ ...props }: AppSidebarProps) {
       return item;
     })
     .filter(item => {
-      if (item.items && item.items.length > 0) {
-        return true;
+      if (item.items) {
+        return item.items.length > 0;
       }
-      if (!item.items) {
-        return canAccessRoute(user, item.url);
-      }
-      return false;
+      return canAccessRoute(user, item.url);
     });
 
   return (
