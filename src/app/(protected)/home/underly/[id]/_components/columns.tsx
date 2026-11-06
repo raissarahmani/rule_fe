@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { exportUnderlyFile, previewUnderlyFile, UnderlyResponse } from "@/lib/api/underly";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
 
 export interface DocItem {
   id: string;
@@ -26,7 +28,37 @@ export const docColumns: ColumnDef<DocItem>[] = [
     id: "actions",
     header: () => <div className="text-right">Actions</div>,
     cell: ({ row }) => {
-      const { docId, filePath } = row.original;
+      const { docId, filePath, name } = row.original;
+
+      const handlePreview = async () => {
+        try {
+          toast.loading(`Loading preview ${name}...`, { id: "preview-toast" });
+          await previewUnderlyFile(docId, filePath);
+          toast.success(`Berhasil membuka preview ${name}`, { id: "preview-toast" });
+        } catch (error: unknown) {
+          console.error("Failed to preview file:", error);
+          const errorMessage =
+            (isAxiosError<{ message?: string }>(error) &&
+              error.response?.data?.message) ||
+            `Gagal membuka preview ${name}. Silakan coba lagi.`;
+          toast.error(errorMessage, { id: "preview-toast" });
+        }
+      };
+
+      const handleDownload = async () => {
+        try {
+          toast.loading(`Mengunduh ${name}...`, { id: "download-toast" });
+          await exportUnderlyFile(docId, filePath);
+          toast.success(`Berhasil mengunduh ${name}`, { id: "download-toast" });
+        } catch (error: unknown) {
+          console.error("Failed to download file:", error);
+          const errorMessage =
+            (isAxiosError<{ message?: string }>(error) &&
+              error.response?.data?.message) ||
+            `Gagal mengunduh ${name}. Silakan coba lagi.`;
+          toast.error(errorMessage, { id: "download-toast" });
+        }
+      };
 
       return (
         <div className="flex justify-end gap-2">
@@ -34,7 +66,7 @@ export const docColumns: ColumnDef<DocItem>[] = [
             variant="ghost"
             size="sm"
             className="text-amber-600 hover:text-amber-700"
-            onClick={() => previewUnderlyFile(docId, filePath)}
+            onClick={handlePreview}
           >
             <Eye className="mr-1 size-4" /> Preview
           </Button>
@@ -42,7 +74,7 @@ export const docColumns: ColumnDef<DocItem>[] = [
             variant="ghost" 
             size="sm" 
             className="text-primary"
-            onClick={() => exportUnderlyFile(docId, filePath)}
+            onClick={handleDownload}
           >
             <Download className="mr-1 size-4" /> Download
           </Button>
@@ -97,7 +129,7 @@ export const duplicateColumns: ColumnDef<UnderlyResponse>[] = [
     id: "actions",
     header: () => <div className="text-right">Actions</div>,
     cell: () => (
-      <div className="flex justify-end gap-1">
+      <div className="flex justify-end gap-1"> 
         <Button
           variant="ghost"
           size="icon"
