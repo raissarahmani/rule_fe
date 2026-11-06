@@ -33,7 +33,7 @@ import { useAuth } from "@/context/auth-context";
 import { canAccessRoute } from "@/lib/permissions";
 
 type AppSidebarProps = React.ComponentProps<typeof Sidebar>;
-
+  
 export function AppSidebar({ ...props }: AppSidebarProps) {
   const pathname = usePathname();
   const { state } = useSidebar();
