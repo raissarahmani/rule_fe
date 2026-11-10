@@ -41,6 +41,9 @@ export const columns: ColumnDef<UnderlyResponse>[] = [
       {
             accessorKey: "doc_date",
             header: "Tanggal Dokumen",
+            cell: ({ row }) => {
+                  return formatDate(row.original.doc_date);
+            },
       },
       {
             accessorKey: "doc_no",
@@ -149,6 +152,9 @@ export const historyColumns: ColumnDef<UnderlyHistoryResponse>[] = [
       {
             accessorKey: "DocDate",
             header: "Tanggal Dokumen",
+            cell: ({ row }) => {
+                  return formatDate(row.original.DocDate);
+            },
       },
       {
             accessorKey: "DocNo",
