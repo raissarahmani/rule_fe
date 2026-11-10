@@ -71,10 +71,10 @@ export function userInfoProfile(value: unknown, subject: string, username?: stri
           menus.add(key as RuleMenu);
         }
       }
-      collect(row.menus, depth + 1);
+      collect(row.menus ?? row.children, depth + 1);
     }
   };
-  collect(grant.menus);
+  collect(grant.menus ?? grant.children);
   if (!menus.size) {
     // Schema only: inspect provider field names/types without logging user or permission values.
     const fieldTypes = (row: Record<string, unknown>) => Object.fromEntries(
@@ -85,7 +85,9 @@ export function userInfoProfile(value: unknown, subject: string, username?: stri
     );
     const menuSchema = JSON.stringify({
       userInfoFields: fieldTypes(data), moduleFields: fieldTypes(grant),
-      menuSamples: Array.isArray(grant.menus) ? grant.menus.slice(0, 3).map(value => fieldTypes(record(value) || {})) : [],
+      menuSamples: Array.isArray(grant.menus ?? grant.children) 
+      ? ((grant.menus ?? grant.children) as unknown[]).slice(0, 3).map((value: unknown) => fieldTypes(record(value) || {})) 
+      : [],
     });
     throw new AuthenticationError(403, "No recognized RMT-RU menu grants", menuSchema);
   }
