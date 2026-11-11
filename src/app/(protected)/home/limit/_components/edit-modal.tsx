@@ -201,7 +201,7 @@ export function EditLimitDialog({
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={submitting}>
+          <Button onClick={handleSave} disabled={(fxNoChange && remittanceNoChange) || submitting}>
             {submitting && <Loader2 className="mr-2 size-4 animate-spin" />}
             Save
           </Button>

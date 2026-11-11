@@ -182,15 +182,14 @@ export default function UnderlyDetailPage({ params }: PageProps) {
                   </div>
 
                   {duplicateData?.is_duplicate && (
-                        <Card className="flex flex-row items-start gap-3 border-amber-300 bg-amber-50 p-4 text-amber-900">
-                              <AlertCircleIcon className="mt-0.5 size-5 flex-shrink-0 text-amber-600" />
-                              <p className="text-sm font-medium">
-                                    Data underlying dengan kombinasi Negara
-                                    Tujuan, Nomor Rekening, dan Tipe Dokumen
-                                    yang sama sudah terdaftar. Silahkan periksa
-                                    kembali data yang akan anda otorisasi.
-                              </p>
-                        </Card>
+                      <Card className="flex flex-row items-start gap-3 border-amber-300 bg-amber-50 p-4 text-amber-900">
+                          <AlertCircleIcon className="mt-0.5 size-5 flex-shrink-0 text-amber-600" />
+                          <p className="text-sm font-medium">
+                              {data?.type?.toUpperCase() === "FX"
+                                  ? "Data underlying dengan kombinasi Nomor Dokumen dan Tipe Dokumen yang sama sudah terdaftar. Silahkan periksa kembali data yang akan anda otorisasi."
+                                  : "Data underlying dengan kombinasi Negara Tujuan, Nomor Rekening, dan Tipe Dokumen yang sama sudah terdaftar. Silahkan periksa kembali data yang akan anda otorisasi."}
+                          </p>
+                      </Card>
                   )}
 
                   {data?.type?.toUpperCase() === "REMITTANCE" && (
