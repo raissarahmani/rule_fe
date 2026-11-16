@@ -160,12 +160,21 @@ export default function RatePage() {
 
         setIsEditing(false);
         await fetchRates();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to save rate configuration:", error);
-        toast.error("Gagal", {
-          description: "Permintaan perubahan margin gagal dikirim. Silakan coba lagi.",
-        });
-      } finally {
+
+        const message = error?.response?.data?.message || "";
+
+        if (message.toLowerCase().includes("unresolved margin request exist")) {
+          toast.error("Gagal", {
+            description: "Terdapat request perubahan margin yang belum diotorisasi",
+          });
+        } else {
+          toast.error("Gagal", {
+            description: "Permintaan perubahan margin gagal dikirim. Silakan coba lagi.",
+          });
+        }
+    } finally {
         setSubmitting(false);
       }
     } else {

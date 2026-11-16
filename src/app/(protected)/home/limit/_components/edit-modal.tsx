@@ -87,11 +87,18 @@ export function EditLimitDialog({
     } catch (error: unknown) {
       console.error("Gagal mengirim permintaan edit limit:", error);
 
-      const errorMessage =
-        (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) ||
-        "Gagal mengirim permintaan edit limit. Silakan coba lagi.";
+      const message = 
+        (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) || "";
 
-      toast.error(errorMessage);
+      if (message.toLowerCase().includes("unresolved limit request exist")) {
+        toast.error("Gagal", {
+          description: "Terdapat request perubahan limit yang belum diotorisasi",
+        });
+      } else {
+        const errorMessage =
+          message || "Gagal mengirim permintaan edit limit. Silakan coba lagi.";
+        toast.error(errorMessage);
+      }
     } finally {
       setSubmitting(false);
     }
