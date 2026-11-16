@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { isAxiosError } from "axios";
 import {
   Pencil,
   Save,
@@ -160,10 +161,11 @@ export default function RatePage() {
 
         setIsEditing(false);
         await fetchRates();
-      } catch (error: any) {
+      } catch (error) {
         console.error("Failed to save rate configuration:", error);
 
-        const message = error?.response?.data?.message || "";
+        const message =
+          (isAxiosError<{ message?: string }>(error) && error.response?.data?.message) || "";
 
         if (message.toLowerCase().includes("unresolved margin request exist")) {
           toast.error("Gagal", {
