@@ -6,18 +6,37 @@ import { Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { BaseHistoryItem } from "./table";
 import { formatDateTime } from "@/lib/utils/date";
+import { ArrowUpDownIcon } from "lucide-react";
 
 export const columns: ColumnDef<BaseHistoryItem>[] = [
   {
     accessorKey: "created_at",
-    header: "Tanggal otorisasi",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Tanggal Otorisasi
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       return <span>{formatDateTime(row.getValue("created_at") as string)}</span>;
     },
   },
   {
     accessorKey: "trx_type",
-    header: "Jenis otorisasi",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Jenis Otorisasi
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const type = row.original.trx_type || "-";
       return <span className="capitalize font-medium">{type}</span>;
@@ -25,7 +44,16 @@ export const columns: ColumnDef<BaseHistoryItem>[] = [
   },
   {
     accessorKey: "action_type",
-    header: "Status",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Status
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const status = String(row.getValue("action_type") || "").toUpperCase();
       
@@ -44,12 +72,30 @@ export const columns: ColumnDef<BaseHistoryItem>[] = [
   },
   {
     accessorKey: "requested_by",
-    header: "User input",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        User input
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => row.original.requested_by || "-",
   },
   {
     accessorKey: "action_by",
-    header: "User otorisasi",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        User otorisasi
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => row.original.action_by || "-",
   },
   {

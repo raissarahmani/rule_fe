@@ -35,7 +35,7 @@ export default function OtorisasiListPage() {
     <div className="flex flex-col gap-6 p-6">
       {/* Page Header */}
       <h1 className="text-2xl font-bold tracking-tight text-foreground">
-        Otorisasi Data
+        Riwayat Otorisasi
       </h1>
 
       <div className="flex flex-col gap-6">
