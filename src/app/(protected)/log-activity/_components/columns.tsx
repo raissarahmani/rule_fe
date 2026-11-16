@@ -2,6 +2,8 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { LogResponse } from "@/lib/api/log";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDownIcon } from "lucide-react";
 
 export const columns: ColumnDef<LogResponse>[] = [
   {
@@ -25,7 +27,16 @@ export const columns: ColumnDef<LogResponse>[] = [
   },
   {
     accessorKey: "action_type",
-    header: "Aksi",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Action
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const raw = row.original.action_type || "";
 
@@ -52,7 +63,16 @@ export const columns: ColumnDef<LogResponse>[] = [
   {
     id: "date",
     accessorKey: "created_at",
-    header: "Tanggal",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Tanggal
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const val = row.original.created_at;
       if (!val) return "-";
@@ -66,7 +86,16 @@ export const columns: ColumnDef<LogResponse>[] = [
   {
     id: "time",
     accessorKey: "created_at",
-    header: "Jam",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 hover:bg-transparent"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Jam
+        <ArrowUpDownIcon className="ml-2 size-4" />
+      </Button>
+    ),
     cell: ({ row }) => {
       const val = row.original.created_at;
       if (!val) return "-";
