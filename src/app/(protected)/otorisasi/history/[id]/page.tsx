@@ -155,7 +155,7 @@ export default function HistoryDetail({ params }: PageProps) {
                 <p className="text-muted-foreground">Status</p>
                 <div>
                   <p className={isApproved ? "text-primary" : "text-destructive"}>
-                    {isApproved ? "Disetujui" : "Ditolak"}
+                    {isApproved ? "Approved" : "Rejected"}
                   </p>
                 </div>
               </div>

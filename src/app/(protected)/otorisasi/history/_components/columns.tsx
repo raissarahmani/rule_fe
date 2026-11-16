@@ -31,12 +31,12 @@ export const columns: ColumnDef<BaseHistoryItem>[] = [
       
       switch (status) {
         case "APPROVE":
-          return <p className="font-medium text-primary">Disetujui</p>;
+          return <p className="font-medium text-primary">Approved</p>;
         case "REJECT":
-          return <p className="font-medium text-destructive">Ditolak</p>;
+          return <p className="font-medium text-destructive">Rejected</p>;
         case "UPDATE":
         case "CREATE":
-          return <p className="font-medium text-amber-500">Menunggu Otorisasi</p>;
+          return <p className="font-medium text-amber-500">Pending Approval</p>;
         default:
           return <p className="font-medium">-</p>;
       }
