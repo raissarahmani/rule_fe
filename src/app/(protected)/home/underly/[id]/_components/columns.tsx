@@ -96,9 +96,9 @@ export const duplicateColumns: ColumnDef<UnderlyResponse>[] = [
     cell: ({ row }) => row.original.id || "-",
   },
   {
-    accessorKey: "title",
+    accessorKey: "doc_no",
     header: "Nomor Dokumen",
-    cell: ({ row }) => row.original.title ?? "-",
+    cell: ({ row }) => row.original.doc_no ?? "-",
   },
   {
     accessorKey: "beneficiary_bank",
